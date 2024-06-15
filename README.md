@@ -4,7 +4,7 @@ Useful scripts based around [ffmpeg](https://ffmpeg.org) to cut and concatenate 
 
 ## Concatenate parts of multiple files
 
-1. Edit `./index.ts` with your file sources
+1. Edit [index.ts](./index.ts) with your file sources
 2. Run `npm start`
 3. In your working directory there is now a `video-editing-tools` dir with an `output` file
 

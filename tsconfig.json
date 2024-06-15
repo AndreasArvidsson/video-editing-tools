@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "NodeNext",
+        "target": "ESNext",
+        "lib": ["ESNext"],
+        "moduleResolution": "NodeNext",
+        "esModuleInterop": true,
+        "rootDir": ".",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}

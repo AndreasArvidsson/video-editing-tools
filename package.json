@@ -1,0 +1,13 @@
+{
+    "name": "video-editing-tools",
+    "version": "1.0.0",
+    "author": "Andreas Arvidsson",
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {
+        "start": "tsx index.ts"
+    },
+    "devDependencies": {
+        "@types/node": "20.14.2"
+    }
+}

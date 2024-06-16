@@ -2,6 +2,21 @@ import * as cp from "child_process";
 import * as path from "node:path";
 import * as fs from "node:fs";
 
+// AAC
+const codecAudio = "aac";
+
+// Copy audio without encoding
+// const codecAudio = "copy";
+
+// H.265/HEVC with hardware encoding for AMD GPUs
+const codecVideo = "hevc_amf";
+
+// H.265/HEVC with hardware encoding for Nvidia GPUs
+// const codecVideo = "hevc_nvenc";
+
+// Copy video without encoding
+// const codecVideo = "copy";
+
 type Timestamp = `${number}:${number}:${number}`;
 
 type FileArg = [string, Timestamp, Timestamp];
@@ -47,8 +62,10 @@ function trimFile(
         from,
         "-to",
         to,
-        "-c",
-        "copy",
+        "-c:a",
+        codecAudio,
+        "-c:v",
+        codecVideo,
         destinationPath,
     ]);
 }
@@ -66,8 +83,10 @@ function concatFiles(dirPath: string, fileExt: string, files: string[]) {
         "0",
         "-i",
         textFilePath,
-        "-c",
-        "copy",
+        "-c:a",
+        codecAudio,
+        "-c:v",
+        codecVideo,
         outputFilePath,
     ]);
 }

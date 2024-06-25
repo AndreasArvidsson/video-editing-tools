@@ -29,6 +29,17 @@ interface File {
     to: Timestamp;
 }
 
+function getTimestamp() {
+    return new Date()
+        .toLocaleDateString("sv", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        })
+        .replace(" ", "T")
+        .replaceAll(":", "-");
+}
+
 function ffmpeg(args: string[]) {
     console.log(`ffmpeg ${args.join(" ")}`);
 
@@ -91,18 +102,6 @@ function concatFiles(dirPath: string, fileExt: string, files: string[]) {
     ]);
 }
 
-function getDestinationFolderPath(sourceFolderPath: string) {
-    const date = new Date()
-        .toLocaleDateString("sv", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        })
-        .replace(" ", "T")
-        .replaceAll(":", "-");
-    return path.join(sourceFolderPath, `video-editing-tools-${date}`);
-}
-
 function getFileExt(fileNames: string[]): string {
     const extensions = new Set(fileNames.map((f) => path.extname(f)));
     if (extensions.size === 0) {
@@ -138,16 +137,48 @@ function getFullFiles(
     });
 }
 
+function writeInfo(
+    destinationDirPath: string,
+    timestamp: string,
+    name: string,
+    cwd: string,
+    fileArgs: FileArg[]
+) {
+    const indent = "    ";
+    const filePath = path.join(destinationDirPath, "info.txt");
+    const fileLines = fileArgs.map((f) => {
+        const values = f.map((v) => `"${v}"`).join(", ");
+        return `${indent}${indent}[${values}],`;
+    });
+    const lines = [
+        `timestamp: ${timestamp}`,
+        `codecAudio: ${codecAudio}`,
+        `codecVideo: ${codecVideo}`,
+        "",
+        `${name}(`,
+        `${indent}"${cwd}",`,
+        `${indent}[`,
+        ...fileLines,
+        `${indent}]`,
+        ")",
+    ];
+    const data = lines.join("\n");
+    fs.writeFileSync(filePath, data, "utf8");
+}
+
 export function concatSubFiles(cwd: string, fileArgs: FileArg[]) {
     if (!fs.existsSync(cwd)) {
         throw Error(`cwd '${cwd}' doesn't exist`);
     }
 
-    const destinationDirPath = getDestinationFolderPath(cwd);
+    const ts = getTimestamp();
+    const destinationDirPath = path.join(cwd, `video-editing-tools-${ts}`);
     const files = getFullFiles(cwd, destinationDirPath, fileArgs);
     const fileExt = getFileExt(files.map((f) => f.fileName));
 
     fs.mkdirSync(destinationDirPath, { recursive: true });
+
+    writeInfo(destinationDirPath, ts, "concatSubFiles", cwd, fileArgs);
 
     for (const file of files) {
         trimFile(file.sourcePath, file.destinationPath, file.from, file.to);

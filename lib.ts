@@ -110,7 +110,11 @@ function getFileExt(fileNames: string[]): string {
     if (extensions.size > 1) {
         throw Error("All files must have the same file extension");
     }
-    return extensions.values().next().value;
+    const ext= extensions.values().next().value;
+    if (ext == null) {
+        throw Error("Can't find file extension");
+    }
+    return ext
 }
 
 function getFullFiles(
